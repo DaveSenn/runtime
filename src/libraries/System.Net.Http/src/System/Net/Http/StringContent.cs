@@ -24,11 +24,18 @@ namespace System.Net.Http
         }
 
         public StringContent(string content, Encoding? encoding, string? mediaType)
+            : this(content, encoding, mediaType, encoding == null ? HttpContent.DefaultStringEncoding.WebName : encoding.WebName)
+        {
+        }
+
+        public StringContent(string content, Encoding? encoding, string? mediaType, string? charset)
             : base(GetContentByteArray(content, encoding))
         {
             // Initialize the 'Content-Type' header with information provided by parameters.
-            MediaTypeHeaderValue headerValue = new MediaTypeHeaderValue((mediaType == null) ? DefaultMediaType : mediaType);
-            headerValue.CharSet = (encoding == null) ? HttpContent.DefaultStringEncoding.WebName : encoding.WebName;
+            MediaTypeHeaderValue headerValue = new MediaTypeHeaderValue((mediaType == null) ? DefaultMediaType : mediaType)
+            {
+                CharSet = charset // Using provided charset instread of encoding.WebName see: #17036
+            };
 
             Headers.ContentType = headerValue;
         }

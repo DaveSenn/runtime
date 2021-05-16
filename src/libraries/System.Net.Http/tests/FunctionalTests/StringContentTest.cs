@@ -50,6 +50,44 @@ namespace System.Net.Http.Functional.Tests
         }
 
         [Fact]
+        public async Task Ctor_UseCustomEncodingAndMediaTypeAndCharSet_ContentTypeHeaderHasNoCharSetDefined()
+        {
+            // Use UTF-8 encoding to serialize a chinese string.
+            string sourceString = "\u4f1a\u5458\u670d\u52a1";
+
+            var content = new StringContent(sourceString, Encoding.UTF8, "application/custom", null);
+
+            Assert.Equal("application/custom", content.Headers.ContentType.MediaType);
+            Assert.Null(content.Headers.ContentType.CharSet);
+
+            var destination = new MemoryStream(12);
+            await content.CopyToAsync(destination);
+
+            string destinationString = Encoding.UTF8.GetString(destination.ToArray(), 0, (int)destination.Length);
+
+            Assert.Equal(sourceString, destinationString);
+        }
+
+        [Fact]
+        public async Task Ctor_UseCustomEncodingAndMediaTypeAndCharSet_ContentTypeHeaderUsesProvidedCharSet()
+        {
+            // Use UTF-8 encoding to serialize a chinese string.
+            string sourceString = "\u4f1a\u5458\u670d\u52a1";
+
+            var content = new StringContent(sourceString, Encoding.UTF8, "application/custom", "Windows-1252");
+
+            Assert.Equal("application/custom", content.Headers.ContentType.MediaType);
+            Assert.Equal("Windows-1252", content.Headers.ContentType.CharSet);
+
+            var destination = new MemoryStream(12);
+            await content.CopyToAsync(destination);
+
+            string destinationString = Encoding.UTF8.GetString(destination.ToArray(), 0, (int)destination.Length);
+
+            Assert.Equal(sourceString, destinationString);
+        }
+
+        [Fact]
         public async Task Ctor_DefineNoEncoding_DefaultEncodingUsed()
         {
             string sourceString = "\u00C4\u00E4\u00FC\u00DC";

@@ -423,6 +423,7 @@ namespace System.Net.Http
         public StringContent(string content) : base (default(byte[])) { }
         public StringContent(string content, System.Text.Encoding? encoding) : base (default(byte[])) { }
         public StringContent(string content, System.Text.Encoding? encoding, string? mediaType) : base (default(byte[])) { }
+        public StringContent(string content, System.Text.Encoding? encoding, string? mediaType, string? charset) : base (default(byte[])) { }
         protected override System.Threading.Tasks.Task SerializeToStreamAsync(System.IO.Stream stream, System.Net.TransportContext? context, System.Threading.CancellationToken cancellationToken) { throw null; }
     }
 }
